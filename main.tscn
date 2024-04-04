@@ -1,0 +1,77 @@
+[gd_scene load_steps=7 format=3 uid="uid://etsi188k8x02"]
+
+[ext_resource type="Script" path="res://game.gd" id="1_necne"]
+[ext_resource type="PackedScene" uid="uid://dhrnwv20uwef3" path="res://snake.tscn" id="1_qsfre"]
+[ext_resource type="PackedScene" uid="uid://chcj871fy7ehe" path="res://snake_food.tscn" id="3_ppd3j"]
+[ext_resource type="Script" path="res://networking_server.gd" id="4_wobff"]
+[ext_resource type="Script" path="res://networking_client.gd" id="5_raf5c"]
+[ext_resource type="Script" path="res://score_label.gd" id="6_ufrhq"]
+
+[node name="Control" type="Control"]
+layout_mode = 3
+anchor_right = 0.194
+anchor_bottom = 0.046
+offset_right = -372.48
+offset_bottom = -49.68
+
+[node name="Game" type="MarginContainer" parent="." groups=["food"]]
+layout_mode = 1
+offset_right = 120.0
+offset_bottom = 51.0
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+script = ExtResource("1_necne")
+metadata/snake = ExtResource("1_qsfre")
+metadata/snake_food = ExtResource("3_ppd3j")
+metadata/_edit_use_anchors_ = true
+
+[node name="Timer" type="Timer" parent="Game"]
+wait_time = 0.068
+
+[node name="NetworkingServer" type="Node" parent="Game"]
+script = ExtResource("4_wobff")
+
+[node name="NetworkingClient" type="Node" parent="Game"]
+script = ExtResource("5_raf5c")
+
+[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="Game"]
+_spawnable_scenes = PackedStringArray("res://snake.tscn")
+spawn_path = NodePath("..")
+
+[node name="Network" type="Node" parent="Game"]
+
+[node name="HUDContainer" type="HBoxContainer" parent="Game"]
+layout_mode = 2
+
+[node name="ButtonContainer" type="HBoxContainer" parent="Game/HUDContainer"]
+layout_mode = 2
+
+[node name="ConnectButton" type="Button" parent="Game/HUDContainer/ButtonContainer"]
+visible = false
+layout_mode = 2
+text = "Connect"
+
+[node name="StartServerButton" type="Button" parent="Game/HUDContainer/ButtonContainer"]
+visible = false
+layout_mode = 2
+text = "Start Server"
+
+[node name="StartGameButton" type="Button" parent="Game/HUDContainer/ButtonContainer"]
+layout_mode = 2
+text = "Start Game"
+
+[node name="ScoreContainer" type="HBoxContainer" parent="Game/HUDContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Game/HUDContainer/ScoreContainer"]
+layout_mode = 2
+text = "Score: 0"
+script = ExtResource("6_ufrhq")
+
+[connection signal="food_eaten" from="Game" to="Game/HUDContainer/ScoreContainer/Label" method="_on_game_food_eaten"]
+[connection signal="timeout" from="Game/Timer" to="Game" method="_on_timer_timeout"]
+[connection signal="pressed" from="Game/HUDContainer/ButtonContainer/ConnectButton" to="Game/NetworkingClient" method="_on_connect_button_pressed"]
+[connection signal="pressed" from="Game/HUDContainer/ButtonContainer/StartServerButton" to="Game/NetworkingServer" method="_on_start_server_button_pressed"]
+[connection signal="pressed" from="Game/HUDContainer/ButtonContainer/StartGameButton" to="Game" method="_on_start_game_button_pressed"]

@@ -1,0 +1,22 @@
+[gd_scene load_steps=3 format=3 uid="uid://chcj871fy7ehe"]
+
+[sub_resource type="CanvasTexture" id="CanvasTexture_c6tp7"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_kdfux"]
+size = Vector2(10, 10)
+
+[node name="SnakeFood" type="Area2D"]
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+modulate = Color(0.0705882, 0.478431, 0.2, 1)
+position = Vector2(5, 5.09375)
+scale = Vector2(10, -9.8125)
+texture = SubResource("CanvasTexture_c6tp7")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(5, 5)
+shape = SubResource("RectangleShape2D_kdfux")
+debug_color = Color(0, 0.6, 0.701961, 0.419608)
+
+[connection signal="area_entered" from="." to="." method="_on_area_entered"]
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
